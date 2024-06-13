@@ -1,0 +1,129 @@
+CREATE DATABASE DBINSTITUTO
+go
+Use DBINSTITUTO
+go
+
+--TABLAS
+Create table Docente (
+Id_docente int not null,
+Nombre varchar(20),
+Apellido varchar(20),
+DNI varchar(8),
+Escuela varchar(30))
+Alter Table Docente Add constraint pk_Id_docente primary key (Id_docente)
+
+
+Create table DocentePorCurso (
+Id_DOCXCURSO int not null,
+Id_docente Int,
+Id_curso Int,
+Semestre varchar(8))
+--Alter Table DocentePorCurso Add constraint pk_Id_DOCXCURSO primary key (Id_DOCXCURSO)
+
+
+Create table Curso (
+Id_curso int not null,
+Nombrecurso varchar(30),
+Créditos int)
+Alter Table Curso Add constraint pk_Id_curso primary key (Id_curso)
+
+Alter Table DocentePorCurso add constraint fk_doc_docxcurso
+foreign key(Id_docente) references docente(Id_docente)
+
+Alter Table DocentePorCurso add constraint fk_curs_docxcurso
+foreign key(Id_curso) references curso(Id_curso)
+
+
+--DOCENTE
+CREATE PROCEDURE sp_InsertarDocente
+@Id_docente int,
+@Nombre varchar(20),
+@Apellido varchar(20),
+@DNI VARCHAR(8),
+@Escuela varchar(30)
+AS
+BEGIN
+INSERT INTO Docente (Id_docente, Nombre, Apellido, DNI, Escuela)
+VALUES (@Id_docente, @Nombre, @Apellido, @DNI, @Escuela)
+END
+
+CREATE PROCEDURE sp_EliminarDocente
+@Id_docente int
+AS
+BEGIN
+DELETE FROM Docente
+WHERE Id_docente = @Id_docente
+END
+
+--Se actualizan todos los datos a excepcion del PK para evitar errores en la identificacion
+CREATE PROCEDURE sp_ActualizarDocente
+@Id_docente int,
+@Nombre varchar(20),
+@Apellido varchar(20),
+@DNI VARCHAR(8),
+@Escuela varchar(30)
+AS
+BEGIN
+UPDATE Docente
+SET 
+Nombre = @Nombre,
+Apellido = @Apellido,
+DNI = @DNI,
+Escuela = @Escuela
+WHERE Id_docente = @Id_docente
+END
+
+
+--CURSO
+CREATE PROCEDURE sp_InsertarCurso
+@Id_curso int,
+@Nombrecurso varchar(20),
+@Creditos int
+AS
+BEGIN
+INSERT INTO Curso (Id_curso, Nombrecurso, Créditos)
+VALUES (@Id_curso, @Nombrecurso, @Creditos)
+END
+ 
+CREATE PROCEDURE sp_ActualizarCurso
+@Id_curso int,
+@Nombrecurso varchar(20),
+@Creditos int
+AS
+BEGIN
+UPDATE Curso
+SET 
+Nombrecurso = @Nombrecurso,
+Créditos = @Creditos
+WHERE Id_curso = @Id_curso
+END
+
+CREATE PROCEDURE sp_EliminarCurso
+@Id_curso int
+AS
+BEGIN
+DELETE FROM Curso
+WHERE Id_curso = @Id_curso
+END
+
+
+--DOCENTE_X_CURSO
+CREATE PROCEDURE sp_InsertarDocentePorCurso
+@Id_DOCXCURSO int,
+@Id_docente int,
+@Id_curso int,
+@Semestre VARCHAR(8)
+AS
+BEGIN
+INSERT INTO DocentePorCurso(Id_DOCXCURSO, Id_docente, Id_curso, Semestre)
+VALUES (@Id_DOCXCURSO, @Id_docente, @Id_curso, @Semestre)
+END
+
+CREATE PROCEDURE sp_EliminarDocentePorCurso
+@Id_DOCXCURSO int,
+@Id_docente int
+AS
+BEGIN
+DELETE FROM DocentePorCurso
+WHERE @Id_DOCXCURSO = @Id_DOCXCURSO AND Id_docente = @Id_docente
+END
